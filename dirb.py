@@ -17,7 +17,7 @@ def cleanscreen():
 	elif system() == 'Windows':
 		os.system('cls')
 def dirlist():
-	path = input('Enter Your File Path :::: > ')
+	
 	dirs = []
 	dirslist = open(path)
 	for i in dirslist:
@@ -26,30 +26,41 @@ def dirlist():
 	return dirs
 def link():
 	fullurl = []
-	url = input('Enter Your Url :::: > ')
-	for path in dirlist():
-		lol = url+'/' + path
-		fullurl.append(lol)
+	linedsplited = []
+	url = input('Enter Your Url File Path :::: > ')
+	op = open(url)
+	for url in op:
+		url = url.splitlines()
+		linedsplited.append(url[0])
+	# for path in dirlist():
+	# 	lol = url+'/' + path
+	# 	fullurl.append(lol)
+	for url in linedsplited:
+		for path in dirlist():
+			lol = url+'/'+path
+			fullurl.append(lol)
 	return fullurl
 status200 = []
 otherstatus = []
 def checkdir(urls):			
 	try:
-		req = requests.get(urls)
+		req= requests.get(urls)
 		print(urls + ' (' + str(req.status_code) +')')
 		if req.status_code != 404:
 			if req.status_code == 200:
 				status200.append(urls + ' (' + str(req.status_code) +')')
 			else:
 				otherstatus.append(urls + ' (' + str(req.status_code) +')')
-	except:
-		pass
+	except Exception as e:
+		print(e)
 def main():
 	try:
+		global path
+		path = input('Enter Your File Path :::: > ')
 		global other
 		cleanscreen()
 		dictory = link()
-		pool = ThreadPool(100)
+		pool = ThreadPool(30)
 		pool.map(checkdir , dictory)
 		pool.close()
 		pool.join()
